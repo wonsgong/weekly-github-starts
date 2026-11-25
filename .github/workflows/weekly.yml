@@ -30,17 +30,41 @@ jobs:
       - name: Run tests
         run: python3 -m unittest discover -s tests -v
       - name: Collect and validate the current week
-        run: python3 scripts/collect.py
-      - name: Commit the report
+        id: report
+        run: |
+          report=$(python3 scripts/collect.py)
+          echo "path=$report" >> "$GITHUB_OUTPUT"
+      - name: Prepare Korean fonts
+        id: fonts
+        continue-on-error: true
+        run: |
+          if [[ -z "$(fc-list :lang=ko)" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y fonts-noto-cjk
+          fi
+      - name: Generate weekly card news
+        if: steps.fonts.outcome == 'success'
+        continue-on-error: true
+        env:
+          REPORT: ${{ steps.report.outputs.path }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: python3 scripts/generate_cards.py "$REPORT"
+      - name: Commit the report and any completed cards
         id: commit
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REPORT: ${{ steps.report.outputs.path }}
         run: |
-          git add -- 'reports/*.json'
+          git add -- "$REPORT"
+          week=$(basename "$REPORT" .json)
+          if [[ -d "card-news/$week" ]]; then
+            git add -- "card-news/$week"
+          fi
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' \
                 -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
-                commit -m 'Update weekly GitHub Trending report'
+                commit -m 'Update weekly GitHub Trending report and cards'
             git push origin "HEAD:refs/heads/${DEFAULT_BRANCH}"
           fi
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

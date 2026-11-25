@@ -1,4 +1,5 @@
 import json
+import struct
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
@@ -6,7 +7,8 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
-from scripts import build, collect
+from scripts import build, collect, generate_cards
+from scripts.cards import CARD_IMAGES
 from scripts.reports import SEOUL, SOURCE, iso_week
 
 
@@ -118,3 +120,39 @@ class ReportTests(unittest.TestCase):
         build.build(self.directory, destination, "https://other.example.com")
         items = ET.parse(feed_path).findall("channel/item")
         self.assertEqual(original_ids, [item.findtext("guid") for item in items])
+
+    def test_publishes_matching_cards_and_removes_stale_copy(self):
+        time = datetime(2025, 1, 1, 6, 40, tzinfo=SEOUL)
+        report_path = self.collect_at(trending(), time)
+        root = Path(self.temp.name)
+        card_root = root / "card-news"
+        deck = card_root / report_path.stem
+        deck.mkdir(parents=True)
+        (deck / "cards.json").write_bytes(report_path.read_bytes())
+        (deck / "index.html").write_text("card gallery", encoding="utf-8")
+        png_header = b"\x89PNG\r\n\x1a\n\0\0\0\x0dIHDR" + struct.pack(">II", 1080, 1350)
+        for name in CARD_IMAGES:
+            (deck / name).write_bytes(png_header)
+        destination = root / "dist"
+
+        build.build(self.directory, destination, "https://example.com", card_root)
+        index = destination / "index.html"
+        week = destination / "weeks" / "2025-W01.html"
+        published = destination / "card-news" / "2025-W01"
+        self.assertIn('href="card-news/2025-W01/index.html"', index.read_text(encoding="utf-8"))
+        self.assertIn('href="../card-news/2025-W01/index.html"', week.read_text(encoding="utf-8"))
+        self.assertEqual({"index.html", *CARD_IMAGES}, {path.name for path in published.iterdir()})
+        with patch.object(generate_cards, "summarize_report") as gemini:
+            self.assertIn("기존", generate_cards.generate(report_path, card_root))
+            gemini.assert_not_called()
+
+        self.collect_at(trending(first_stars="100"), time)
+        with patch.dict("os.environ", {"GEMINI_API_KEY": "offline-test-key"}):
+            with patch.object(generate_cards, "summarize_report", side_effect=RuntimeError("offline")):
+                with self.assertRaises(RuntimeError):
+                    generate_cards.generate(report_path, card_root)
+        self.assertTrue((deck / "index.html").exists())
+
+        build.build(self.directory, destination, "https://example.com", card_root)
+        self.assertNotIn("카드뉴스 보기", index.read_text(encoding="utf-8"))
+        self.assertFalse(published.exists())

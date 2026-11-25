@@ -10,8 +10,10 @@ from uuid import NAMESPACE_URL, uuid5
 from xml.etree import ElementTree as ET
 
 if __package__:
+    from .cards import CARD_ASSETS, CARD_ROOT, complete_card_set
     from .reports import REPORTS, ROOT, SEOUL, SOURCE, validate_report
 else:
+    from cards import CARD_ASSETS, CARD_ROOT, complete_card_set
     from reports import REPORTS, ROOT, SEOUL, SOURCE, validate_report
 
 TITLE = "GitHub 주간 Trending TOP 10"
@@ -56,7 +58,7 @@ def page(title, body, prefix=""):
 """
 
 
-def report_body(report, public_url):
+def report_body(report, public_url, card_url=None):
     week = report["week"]
     timestamp = datetime.fromisoformat(report["collected_at"]).astimezone(SEOUL)
     items = []
@@ -73,6 +75,7 @@ def report_body(report, public_url):
         share.append(f'{repo["rank"]}. {repo["name"]} (+{stars})')
     share.append(public_url)
     share_text = escape("\n".join(share))
+    card_link = f'<a href="{escape(card_url)}">카드뉴스 보기</a>' if card_url else ""
     return f"""
     <section class="ranking" aria-labelledby="ranking">
       <div class="eyebrow">{escape(week)}</div>
@@ -80,7 +83,7 @@ def report_body(report, public_url):
       <p class="scope">{SCOPE} 주간 스타 수로 집계한 순위입니다.</p>
       <div class="report-meta">
         <p><time datetime="{timestamp.isoformat()}">{timestamp:%Y-%m-%d %H:%M:%S} KST</time>
-          <a href="{escape(report["source"])}">출처 · GitHub</a></p>
+          <a href="{escape(report["source"])}">출처 · GitHub</a>{card_link}</p>
         <button type="button" id="copy" hidden>공유 문구 복사</button>
       </div>
       <p id="copy-status" role="status" aria-live="polite"></p>
@@ -118,7 +121,7 @@ def write_feed(path, reports, base_url):
     ET.ElementTree(rss).write(path, encoding="utf-8", xml_declaration=True)
 
 
-def build(report_dir, destination, base_url):
+def build(report_dir, destination, base_url, card_root=CARD_ROOT):
     base_url = base_url.rstrip("/")
     parsed = urlsplit(base_url)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
@@ -126,10 +129,25 @@ def build(report_dir, destination, base_url):
     reports = load_reports(report_dir)
     weeks = destination / "weeks"
     weeks.mkdir(parents=True, exist_ok=True)
+    published_cards = destination / "card-news"
+    card_urls = {}
+    for report in reports:
+        week = report["week"]
+        source = card_root / week
+        if complete_card_set(source, report):
+            output = published_cards / week
+            output.mkdir(parents=True, exist_ok=True)
+            for name in CARD_ASSETS:
+                shutil.copyfile(source / name, output / name)
+            card_urls[week] = f"card-news/{week}/index.html"
+    for path in published_cards.glob("[0-9][0-9][0-9][0-9]-W[0-9][0-9]"):
+        if path.is_dir() and path.name not in card_urls:
+            shutil.rmtree(path)
 
     if reports:
         latest = reports[0]
-        body = report_body(latest, f'{base_url}/weeks/{latest["week"]}.html')
+        week = latest["week"]
+        body = report_body(latest, f"{base_url}/weeks/{week}.html", card_urls.get(week))
     else:
         body = f"""<h1>{TITLE}</h1>
         <p class="scope">{SCOPE} 주간 스타 수로 집계한 순위입니다.</p>
@@ -141,8 +159,9 @@ def build(report_dir, destination, base_url):
         if index:
             archive.append(f'<li><a href="weeks/{week}.html">{week}</a></li>')
         url = f"{base_url}/weeks/{week}.html"
+        card_url = f"../{card_urls[week]}" if week in card_urls else None
         (weeks / f"{week}.html").write_text(
-            page(f"{week} · {TITLE}", report_body(report, url), "../"),
+            page(f"{week} · {TITLE}", report_body(report, url, card_url), "../"),
             encoding="utf-8",
         )
     archive_body = f"<ul>{''.join(archive)}</ul>" if archive else "<p>지난 주차 리포트가 없습니다.</p>"

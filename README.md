@@ -24,3 +24,11 @@ python3 -m http.server 8000 --directory dist
 3. **Actions → Weekly GitHub Trending → Run workflow**에서 기본 브랜치를 선택하여 수동 실행할 수 있습니다.
 
 워크플로는 매주 수요일 오전 06:40(Asia/Seoul)에 예약 실행됩니다. 수집과 검증에 성공하면 주차별 JSON을 기본 브랜치에 커밋합니다. 이어서 해당 커밋의 리포트로 사이트를 빌드하고, `dist/`를 업로드한 뒤 같은 실행에서 Pages에 배포합니다. 기본 브랜치 보호 규칙이 워크플로의 커밋을 차단하면 커밋 단계에서 종료됩니다. [GitHub Pages 사용자 지정 워크플로 문서](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+
+## 주간 카드뉴스
+
+**Settings → Secrets and variables → Actions → Secrets**에서 `GEMINI_API_KEY`를 Repository Secret으로 등록합니다. 모델을 지정하려면 같은 화면의 **Variables**에 `GEMINI_MODEL`을 추가합니다. 변수가 비어 있으면 `gemini-3.5-flash-lite`를 사용합니다.
+
+워크플로는 TOP 10 리포트와 일치하는 기존 카드뉴스가 있으면 재사용합니다. 새로 생성할 때는 공개 README와 저장소 설명으로 한국어 문구를 만들고, Chrome으로 1080×1350 PNG 11장을 렌더링합니다. 파일은 `card-news/YYYY-Www/`에 보관합니다. 완성된 카드 세트는 Pages에 포함되고 해당 리포트에 **카드뉴스 보기** 링크가 표시됩니다. 키가 비어 있거나 카드 생성에 실패한 주에도 순위 페이지는 배포됩니다.
+
+로컬에서 새 카드를 만들려면 환경 변수로 키를 전달한 상태에서 `python3 scripts/generate_cards.py reports/YYYY-Www.json`을 실행합니다. PNG 렌더링에는 Node.js, Chrome 및 한국어 폰트가 필요합니다. Chrome이 기본 경로에 없으면 `CHROME_BIN`으로 실행 파일 경로를 지정할 수 있습니다.

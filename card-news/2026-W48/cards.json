@@ -1,0 +1,118 @@
+{
+  "week": "2026-W48",
+  "collected_at": "2026-11-25T09:52:03+09:00",
+  "source": "https://github.com/trending?since=weekly",
+  "repositories": [
+    {
+      "rank": 1,
+      "name": "mvanhorn/last30days-skill",
+      "url": "https://github.com/mvanhorn/last30days-skill",
+      "description": "AI agent skill that researches any topic across Reddit, X, YouTube, HN, Polymarket, and the web - then synthesizes a grounded summary",
+      "weekly_stars": 5369,
+      "headline": "최근 30일을 훑는 웹 조사 도구",
+      "summary": "Reddit, X, YouTube 등 여러 채널을 검색하고 최근 30일간의 주요 반응과 근거를 요약합니다.",
+      "use_case": "미팅 전에 상대 기업이나 제품에 대한 최근 논의와 반응을 빠르게 파악할 때 살펴볼 만합니다.",
+      "readme_url": "https://github.com/mvanhorn/last30days-skill/blob/main/README.md"
+    },
+    {
+      "rank": 2,
+      "name": "dream-num/univer",
+      "url": "https://github.com/dream-num/univer",
+      "description": "Build your own AI office with Univer Office SDK. Bring editing, calculation, collaboration, and file processing into your product for people and AI agents. Built on an extensible open-source core.",
+      "weekly_stars": 3278,
+      "headline": "앱 안에 문서와 표를 넣는 SDK",
+      "summary": "문서와 스프레드시트 편집기, 수식 계산 엔진을 웹 애플리케이션에 통합할 수 있습니다.",
+      "use_case": "사용자가 서비스 안에서 문서를 작성하거나 표를 편집하고 계산해야 할 때 씁니다.",
+      "readme_url": "https://github.com/dream-num/univer/blob/dev/README.md"
+    },
+    {
+      "rank": 3,
+      "name": "kajisho5/ffmpeg-skill",
+      "url": "https://github.com/kajisho5/ffmpeg-skill",
+      "description": "Local video editor for coding agents: 42 FFmpeg tools with a machine-readable contract and an MCP server, for Claude Code, Cursor and Codex. Cut, captions, reframe, loudness, platform exports. No cloud, no API keys.",
+      "weekly_stars": 2993,
+      "headline": "AI 에이전트용 로컬 영상 편집",
+      "summary": "코딩 에이전트가 로컬 FFmpeg로 영상 컷 편집, 화면 비율 변경, 자막 효과 적용 등을 수행할 수 있습니다.",
+      "use_case": "원본 파일을 외부에 올리기 어려운 영상의 반복 편집 작업을 자동화할 때 쓸 수 있습니다.",
+      "readme_url": "https://github.com/kajisho5/ffmpeg-skill/blob/main/README.md"
+    },
+    {
+      "rank": 4,
+      "name": "meta/astryx",
+      "url": "https://github.com/meta/astryx",
+      "description": "An open source design system that's fully customizable and agent ready",
+      "weekly_stars": 2890,
+      "headline": "React 19용 디자인 시스템",
+      "summary": "접근성을 고려한 React 컴포넌트와 브랜드 테마를 제공해 일관된 웹 화면을 만들 수 있습니다.",
+      "use_case": "팀과 코딩 에이전트가 같은 버튼, 입력창, 색상 규칙을 써서 화면을 만들 때 활용합니다.",
+      "readme_url": "https://github.com/meta/astryx/blob/main/README.md"
+    },
+    {
+      "rank": 5,
+      "name": "alibaba/open-code-review",
+      "url": "https://github.com/alibaba/open-code-review",
+      "description": "Secure, fast, efficient, battle-tested at Alibaba's scale. Hybrid architecture code review tool: deterministic pipelines + LLM Agent, precise line-level comments, built-in multi-language ruleset (NPE, thread-safety, XSS, SQL injection), OpenAI & Anthropic compatible.",
+      "weekly_stars": 2638,
+      "headline": "변경 줄에 코멘트를 다는 AI 리뷰",
+      "summary": "규칙 기반 검사와 LLM을 결합해 Git 변경 내용을 검토하고 코드 줄 단위로 리뷰를 남깁니다.",
+      "use_case": "변경 파일이 많은 PR에서 사람이 검토하기 전에 먼저 살펴볼 부분을 찾는 데 씁니다.",
+      "readme_url": "https://github.com/alibaba/open-code-review/blob/main/README.md"
+    },
+    {
+      "rank": 6,
+      "name": "google-labs-code/stitch-skills",
+      "url": "https://github.com/google-labs-code/stitch-skills",
+      "description": "A library of Agent Skills designed to work with the Stitch MCP server. Each skill follows the Agent Skills open standard, for compatibility with coding agents such as Antigravity, Gemini CLI, Claude Code, Cursor.",
+      "weekly_stars": 2626,
+      "headline": "Stitch를 코딩 에이전트에 연결",
+      "summary": "에이전트가 Stitch에서 화면을 만들고 디자인 시스템을 적용하거나, 화면을 React 컴포넌트로 옮기도록 돕습니다.",
+      "use_case": "Stitch에서 만든 화면을 웹앱에 구현하거나 기존 프런트엔드 화면을 Stitch로 옮길 때 씁니다.",
+      "readme_url": "https://github.com/google-labs-code/stitch-skills/blob/main/README.md"
+    },
+    {
+      "rank": 7,
+      "name": "GoogleChrome/modern-web-guidance-src",
+      "url": "https://github.com/GoogleChrome/modern-web-guidance-src",
+      "description": "Keep your coding agent up to date with the latest web best practices",
+      "weekly_stars": 2494,
+      "headline": "최신 웹 개발 가이드의 소스",
+      "summary": "코딩 에이전트에 최신 웹 API와 브라우저 호환성 정보를 제공하는 Modern Web Guidance의 개발 저장소입니다.",
+      "use_case": "에이전트가 참고하는 웹 개발 가이드를 살펴보거나 개선에 기여할 때 참고합니다.",
+      "readme_url": "https://github.com/GoogleChrome/modern-web-guidance-src/blob/main/README.md"
+    },
+    {
+      "rank": 8,
+      "name": "backnotprop/plannotator",
+      "url": "https://github.com/backnotprop/plannotator",
+      "description": "The workspace to stay in the loop and on top of agents - shape, decide, plan, annotate, review code, share with team, and send all feedback to agents with one click.",
+      "weekly_stars": 1956,
+      "headline": "AI가 만든 작업을 검토하는 도구",
+      "summary": "에이전트가 만든 계획, 문서, 코드 변경을 브라우저에서 살펴보고 주석으로 피드백을 보낼 수 있습니다.",
+      "use_case": "코딩 에이전트가 제안한 수정 계획에서 바꿨으면 하는 부분을 짚어줄 때 씁니다.",
+      "readme_url": "https://github.com/backnotprop/plannotator/blob/main/README.md"
+    },
+    {
+      "rank": 9,
+      "name": "ag-ui-protocol/ag-ui",
+      "url": "https://github.com/ag-ui-protocol/ag-ui",
+      "description": "AG-UI: the Agent-User Interaction Protocol. Bring Agents into Frontend Applications.",
+      "weekly_stars": 1753,
+      "headline": "AI 에이전트와 화면을 잇는 규격",
+      "summary": "에이전트의 응답 스트리밍, 작업 상태, 도구 호출을 앱 화면과 주고받는 이벤트 형식을 표준화합니다.",
+      "use_case": "웹앱에서 에이전트의 답변과 진행 상태를 실시간으로 보여줄 때 활용합니다.",
+      "readme_url": "https://github.com/ag-ui-protocol/ag-ui/blob/main/README.md"
+    },
+    {
+      "rank": 10,
+      "name": "we-promise/sure",
+      "url": "https://github.com/we-promise/sure",
+      "description": "The personal finance app for everyone (by everyone)",
+      "weekly_stars": 1567,
+      "headline": "내 서버에서 쓰는 개인 금융 앱",
+      "summary": "Docker로 직접 운영할 수 있는 오픈소스 자산 관리 앱으로, 브라우저와 데스크톱·모바일 앱에서 접근할 수 있습니다.",
+      "use_case": "계좌와 거래 내역을 한곳에서 보고 서비스도 직접 운영하고 싶을 때 살펴볼 만합니다.",
+      "readme_url": "https://github.com/we-promise/sure/blob/main/README.md"
+    }
+  ],
+  "gemini_model": "gemini-3.8-flash"
+}
