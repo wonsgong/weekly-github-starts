@@ -68,7 +68,7 @@ def teams_payload(report, base_url, dist, card_root=CARD_ROOT):
                 "size": "Stretch",
                 "url": f"{gallery_url}/teams/{name}",
                 "altText": label,
-                "selectAction": {"type": "Action.OpenUrl", "url": f"{gallery_url}/{name}"},
+                "msTeams": {"allowExpand": True},
             }
             for name, label in zip(CARD_IMAGES, labels)
         ]

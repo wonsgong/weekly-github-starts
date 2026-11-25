@@ -164,8 +164,9 @@ class ReportTests(unittest.TestCase):
             self.assertTrue(all(image["type"] == "Image" and image["size"] == "Stretch" for image in images))
             self.assertEqual([f"{gallery}/teams/{name}" for name in CARD_IMAGES],
                              [image["url"] for image in images])
-            self.assertEqual([f"{gallery}/{name}" for name in CARD_IMAGES],
-                             [image["selectAction"]["url"] for image in images])
+            for image in images:
+                self.assertEqual({"allowExpand": True}, image["msTeams"])
+                self.assertNotIn("selectAction", image)
         self.assertEqual([{"type": "Action.OpenUrl", "title": "자세히 보기",
                            "url": "https://example.com/weeks/2025-W01.html"}], card["actions"])
         with patch.object(generate_cards, "summarize_report") as gemini:
