@@ -32,3 +32,9 @@ python3 -m http.server 8000 --directory dist
 워크플로는 TOP 10 리포트와 일치하는 기존 카드뉴스가 있으면 재사용합니다. 새로 생성할 때는 공개 README와 저장소 설명으로 한국어 문구를 만들고, Chrome으로 1080×1350 PNG 11장을 렌더링합니다. 파일은 `card-news/YYYY-Www/`에 보관합니다. 완성된 카드 세트는 Pages에 포함되고 해당 리포트에 **카드뉴스 보기** 링크가 표시됩니다. 키가 비어 있거나 카드 생성에 실패한 주에도 순위 페이지는 배포됩니다.
 
 로컬에서 새 카드를 만들려면 환경 변수로 키를 전달한 상태에서 `python3 scripts/generate_cards.py reports/YYYY-Www.json`을 실행합니다. PNG 렌더링에는 Node.js, Chrome 및 한국어 폰트가 필요합니다. Chrome이 기본 경로에 없으면 `CHROME_BIN`으로 실행 파일 경로를 지정할 수 있습니다.
+
+## Teams 배포 알림
+
+Teams Workflows의 **Send webhook alerts to a channel** 템플릿에서 발급한 URL을 저장소의 Actions Secret `TEAMS_WEBHOOK_URL`에 등록합니다. 웹훅에서 **Anyone** 인증 옵션을 사용하는 경우 URL만으로 요청을 보낼 수 있으므로 URL을 코드나 로그에 남기지 않습니다. [Teams 웹훅 설정](https://support.microsoft.com/en-gb/workflows/send-messages-in-teams-using-incoming-webhooks)
+
+Pages 배포 성공 후 주차 제목과 저장소 링크 10개를 Adaptive Card로 전송합니다. 해당 주차에 카드뉴스가 공개되면 한국어 요약과 카드뉴스 링크를 추가하고, 표지 미리보기를 만들 수 있으면 이미지도 넣습니다. 웹훅 요청 결과는 Actions의 `notify-teams` 작업에서 확인하고, 채널 게시 결과는 Teams 워크플로 실행 기록에서 확인할 수 있습니다.

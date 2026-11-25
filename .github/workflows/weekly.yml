@@ -75,6 +75,8 @@ jobs:
     permissions:
       contents: read
       pages: read
+    outputs:
+      teams-payload: ${{ steps.teams.outputs.payload }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -89,6 +91,21 @@ jobs:
         env:
           PAGES_URL: ${{ steps.pages.outputs.base_url }}
         run: python3 scripts/build.py --base-url "$PAGES_URL"
+      - name: Prepare Teams cover renderer
+        continue-on-error: true
+        run: |
+          if compgen -G 'dist/card-news/*/00-cover.png' >/dev/null && ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+      - name: Prepare Teams notification
+        id: teams
+        continue-on-error: true
+        env:
+          PAGES_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          payload=$(python3 scripts/teams_payload.py --base-url "$PAGES_URL")
+          printf '%s\n' "payload=$payload" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist/
@@ -105,3 +122,30 @@ jobs:
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
+
+  notify-teams:
+    needs: [build, deploy]
+    if: needs.deploy.result == 'success' && needs.build.outputs.teams-payload != ''
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Send weekly Teams notification
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          TEAMS_PAYLOAD: ${{ needs.build.outputs.teams-payload }}
+        run: |
+          if [[ -z "$TEAMS_WEBHOOK_URL" ]]; then
+            echo 'TEAMS_WEBHOOK_URL is missing. Skipping notification.'
+            exit 0
+          fi
+          if ! status=$(curl --silent --proto '=https' --connect-timeout 10 --max-time 30 \
+              --output /dev/null --write-out '%{http_code}' \
+              --json "$TEAMS_PAYLOAD" --url "$TEAMS_WEBHOOK_URL"); then
+            echo '::error::Teams webhook request could not be completed.'
+            exit 1
+          fi
+          if [[ "$status" != 2[0-9][0-9] ]]; then
+            echo "::error::Teams webhook returned HTTP $status."
+            exit 1
+          fi
+          echo "Teams webhook accepted the request (HTTP $status)."
