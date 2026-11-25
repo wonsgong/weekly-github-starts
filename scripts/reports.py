@@ -1,6 +1,7 @@
 import json
 import re
 from datetime import datetime
+from math import isfinite
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from zoneinfo import ZoneInfo
@@ -27,6 +28,18 @@ SKILL_BOARDS = {
         "scope": "매주 수집한 skills.sh Trending의 최근 24시간 설치 수 순위입니다.",
     },
 }
+HUGGINGFACE = "https://huggingface.co"
+HUGGINGFACE_MODELS = "huggingface-models"
+MODEL_ID = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_][A-Za-z0-9_.-]*)?")
+REPORT_BOARDS = {
+    **SKILL_BOARDS,
+    HUGGINGFACE_MODELS: {
+        "label": "Hugging Face 모델",
+        "url": f"{HUGGINGFACE}/models?sort=trending",
+        "metric": "트렌딩 점수",
+        "scope": "매주 수집 시점의 Hugging Face 모델 목록에서 트렌딩 점수가 높은 상위 10개입니다.",
+    },
+}
 
 
 def iso_week(timestamp):
@@ -47,7 +60,7 @@ def skill_url(identity):
 
 def validate_report(report, week):
     if "board" in report:
-        validate_skill_report(report, week)
+        validate_board_report(report, week)
         return
     if report["week"] != week or report["source"] != SOURCE:
         raise ValueError("리포트 주차 또는 출처가 올바르지 않습니다.")
@@ -77,35 +90,41 @@ def validate_report(report, week):
         raise ValueError("리포트 정렬이 올바르지 않습니다.")
 
 
-def validate_skill_report(report, week):
+def validate_board_report(report, week):
     board = report["board"]
-    if board not in SKILL_BOARDS or report["source"] != SKILL_BOARDS[board]["url"]:
-        raise ValueError("스킬 순위 출처가 올바르지 않습니다.")
+    if board not in REPORT_BOARDS or report["source"] != REPORT_BOARDS[board]["url"]:
+        raise ValueError("순위 출처가 올바르지 않습니다.")
     if report["week"] != week or iso_week(datetime.fromisoformat(report["collected_at"])) != week:
-        raise ValueError("스킬 순위의 수집 주차와 파일 주차가 다릅니다.")
+        raise ValueError("순위의 수집 주차와 파일 주차가 다릅니다.")
     if board == "skill-leaderboard":
         datetime.strptime(report["snapshot_date"], "%Y-%m-%d")
     entries = report["repositories"]
     if len(entries) != TOP:
-        raise ValueError(f"스킬 순위 항목은 {TOP}개여야 합니다.")
+        raise ValueError(f"순위 항목은 {TOP}개여야 합니다.")
     ids = set()
     previous = None
     for rank, entry in enumerate(entries, 1):
         identity, name, count = entry["id"], entry["name"], entry["metric_value"]
+        if not isinstance(name, str) or not name.strip() or len(name) > 200:
+            raise ValueError(f"잘못된 순위 이름입니다. ({rank}위)")
+        valid_count = type(count) is int
         if board == "skill-leaderboard":
             valid_address = bool(REPO_NAME.fullmatch(name)) and identity == name.casefold()
             expected_url = f"{GITHUB}/{name}"
+        elif board == HUGGINGFACE_MODELS:
+            valid_address = bool(MODEL_ID.fullmatch(name)) and identity == name
+            expected_url = f"{HUGGINGFACE}/{name}"
+            valid_count = valid_count or (type(count) is float and isfinite(count))
         else:
             valid_address = bool(SKILL_PATH.fullmatch(identity))
             expected_url = skill_url(identity)
         if (
             not valid_address or entry["url"] != expected_url or identity in ids
-            or not isinstance(name, str) or not name.strip() or len(name) > 200
             or not isinstance(entry["description"], str)
             or type(entry["rank"]) is not int or entry["rank"] != rank
-            or type(count) is not int or count < 0 or (previous is not None and count > previous)
+            or not valid_count or count < 0 or (previous is not None and count > previous)
         ):
-            raise ValueError(f"잘못된 스킬 순위 항목입니다. ({rank}위)")
+            raise ValueError(f"잘못된 순위 항목입니다. ({rank}위)")
         ids.add(identity)
         previous = count
 

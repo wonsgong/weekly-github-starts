@@ -41,6 +41,10 @@ python3 -m http.server 8000 --directory dist
 
 로컬 수집은 `python3 scripts/collect_skills.py skill-leaderboard`와 `python3 scripts/collect_skills.py skills-sh`를 사용합니다. 카드 생성 명령에는 해당 출처의 리포트 경로를 전달합니다.
 
+## Hugging Face 모델 순위
+
+**Hugging Face 모델** 탭은 매주 수집한 모델 목록의 `trendingScore` 상위 10개를 표시합니다. 리포트는 `reports/huggingface-models/YYYY-Www.json`에 저장합니다. 로컬에서 갱신하려면 `python3 scripts/collect_huggingface.py`를 실행한 뒤 사이트를 빌드합니다. [Hugging Face 모델 트렌딩](https://huggingface.co/models?sort=trending)
+
 ## Teams 배포 알림
 
 Teams Workflows의 **Send webhook alerts to a channel** 템플릿에서 발급한 URL을 저장소의 Actions Secret `TEAMS_WEBHOOK_URL`에 등록합니다. 웹훅에서 **Anyone** 인증 옵션을 사용하는 경우 URL만으로 요청을 보낼 수 있으므로 URL을 코드나 로그에 남기지 않습니다. [Teams 웹훅 설정](https://support.microsoft.com/en-gb/workflows/send-messages-in-teams-using-incoming-webhooks)

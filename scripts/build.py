@@ -11,10 +11,10 @@ from xml.etree import ElementTree as ET
 
 if __package__:
     from .cards import CARD_ASSETS, CARD_ROOT, complete_card_set
-    from .reports import REPORTS, ROOT, SEOUL, SKILL_BOARDS, SOURCE, validate_report
+    from .reports import REPORTS, REPORT_BOARDS, ROOT, SEOUL, SOURCE, validate_report
 else:
     from cards import CARD_ASSETS, CARD_ROOT, complete_card_set
-    from reports import REPORTS, ROOT, SEOUL, SKILL_BOARDS, SOURCE, validate_report
+    from reports import REPORTS, REPORT_BOARDS, ROOT, SEOUL, SOURCE, validate_report
 
 TITLE = "GitHub 주간 Trending TOP 10"
 SCOPE = "GitHub 주간 Trending에 오른 저장소 중"
@@ -37,7 +37,7 @@ def load_reports(report_dir, board=None):
 
 def page(title, body, prefix="", board=None):
     paths = {None: ("GitHub Trending", "index.html"), **{
-        name: (meta["label"], f"{name}/index.html") for name, meta in SKILL_BOARDS.items()
+        name: (meta["label"], f"{name}/index.html") for name, meta in REPORT_BOARDS.items()
     }}
     current = ' aria-current="true"'
     tabs = "".join(
@@ -74,7 +74,7 @@ def report_body(report, public_url, card_url=None):
     week = report["week"]
     timestamp = datetime.fromisoformat(report["collected_at"]).astimezone(SEOUL)
     board = report.get("board")
-    meta = SKILL_BOARDS.get(board)
+    meta = REPORT_BOARDS.get(board)
     title = f'{meta["label"]} TOP 10' if meta else TITLE
     scope = meta["scope"] if meta else f"{SCOPE} 주간 스타 수로 집계한 순위입니다."
     metric = meta["metric"] if meta else "주간 스타"
@@ -88,7 +88,7 @@ def report_body(report, public_url, card_url=None):
         description = escape(repo["description"])
         summary = f'<p class="description">{description}</p>' if description else ""
         count = f'{repo[metric_key]:,}'
-        if board != "skills-sh":
+        if board in {None, "skill-leaderboard"}:
             count = f"+{count}"
         items.append(f"""<li>
           <div><a class="repo" href="{escape(repo["url"])}">{name}</a>{summary}</div>
@@ -144,7 +144,7 @@ def write_feed(path, reports, base_url):
 
 
 def publish_board(reports, destination, base_url, card_root, board=None):
-    meta = SKILL_BOARDS.get(board)
+    meta = REPORT_BOARDS.get(board)
     title = f'{meta["label"]} TOP 10' if meta else TITLE
     section = Path(board) if board else Path(".")
     directory = destination / section
@@ -209,7 +209,7 @@ def build(report_dir, destination, base_url, card_root=CARD_ROOT):
         raise ValueError("사이트 URL은 쿼리나 프래그먼트 없는 HTTP(S) 주소여야 합니다.")
     reports = load_reports(report_dir)
     publish_board(reports, destination, base_url, card_root)
-    for board in SKILL_BOARDS:
+    for board in REPORT_BOARDS:
         publish_board(load_reports(report_dir / board, board), destination, base_url, card_root, board)
     write_feed(destination / "feed.xml", reports, base_url)
     for asset in ("style.css", "copy.js"):

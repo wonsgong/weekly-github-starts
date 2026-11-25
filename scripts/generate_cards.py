@@ -17,12 +17,12 @@ if __package__:
     from .cards import CARD_ROOT, complete_card_set, valid_card_image
     from .collect_skills import skill_description
     from .render_cards import render
-    from .reports import ROOT, validate_report
+    from .reports import ROOT, SKILL_BOARDS, validate_report
 else:
     from cards import CARD_ROOT, complete_card_set, valid_card_image
     from collect_skills import skill_description
     from render_cards import render
-    from reports import ROOT, validate_report
+    from reports import ROOT, SKILL_BOARDS, validate_report
 
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
 COPY_FIELDS = ("headline", "summary", "use_case", "readme_url")
@@ -238,6 +238,8 @@ def generate(report_path, output_root):
     week = report_path.stem
     validate_report(report, week)
     board = report.get("board")
+    if board is not None and board not in SKILL_BOARDS:
+        raise ValueError("이 출처는 순위 페이지만 제공합니다.")
     deck_root = output_root / board if board else output_root
     destination = deck_root / week
     if complete_card_set(destination, report):
