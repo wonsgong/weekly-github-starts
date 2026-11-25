@@ -148,12 +148,25 @@ class ReportTests(unittest.TestCase):
             resize.assert_called_once_with(published)
         card = payload["attachments"][0]["content"]
         gallery = "https://example.com/card-news/2025-W01"
-        self.assertEqual([f"{gallery}/teams/{name}" for name in CARD_IMAGES],
-                         [image["url"] for image in card["body"]])
-        self.assertTrue(all(image["type"] == "Image" and image["size"] == "Stretch" for image in card["body"]))
-        self.assertEqual([f"{gallery}/{name}" for name in CARD_IMAGES],
-                         [image["selectAction"]["url"] for image in card["body"]])
-        self.assertEqual([{"type": "Action.OpenUrl", "title": "주간 리포트 보기",
+        self.assertEqual("1.5", card["version"])
+        self.assertEqual({"width": "Full"}, card["msteams"])
+        self.assertEqual(["wide", "atMost:standard"], [grid["targetWidth"] for grid in card["body"]])
+        for grid, columns, width, expected in zip(
+            card["body"], (3, 2), ("188px", "stretch"), ([3, 3, 3, 2], [2, 2, 2, 2, 2, 1]),
+        ):
+            grouped = []
+            for row in grid["items"]:
+                self.assertEqual("ColumnSet", row["type"])
+                self.assertEqual([width] * columns, [column["width"] for column in row["columns"]])
+                grouped.append([image for column in row["columns"] for image in column["items"]])
+            self.assertEqual(expected, [len(row) for row in grouped])
+            images = [image for row in grouped for image in row]
+            self.assertTrue(all(image["type"] == "Image" and image["size"] == "Stretch" for image in images))
+            self.assertEqual([f"{gallery}/teams/{name}" for name in CARD_IMAGES],
+                             [image["url"] for image in images])
+            self.assertEqual([f"{gallery}/{name}" for name in CARD_IMAGES],
+                             [image["selectAction"]["url"] for image in images])
+        self.assertEqual([{"type": "Action.OpenUrl", "title": "자세히 보기",
                            "url": "https://example.com/weeks/2025-W01.html"}], card["actions"])
         with patch.object(generate_cards, "summarize_report") as gemini:
             self.assertIn("기존", generate_cards.generate(report_path, card_root))

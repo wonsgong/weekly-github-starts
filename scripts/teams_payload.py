@@ -35,6 +35,17 @@ def make_teams_images(published):
             (stage / name).replace(display / name)
 
 
+def image_grid(images, columns, column_width, target_width):
+    rows = []
+    for offset in range(0, len(images), columns):
+        row = [{"type": "Column", "width": column_width, "items": [image]}
+               for image in images[offset:offset + columns]]
+        row.extend({"type": "Column", "width": column_width, "items": []}
+                   for _ in range(columns - len(row)))
+        rows.append({"type": "ColumnSet", "spacing": "Small", "columns": row})
+    return {"type": "Container", "targetWidth": target_width, "items": rows}
+
+
 def teams_payload(report, base_url, dist, card_root=CARD_ROOT):
     base_url = base_url.rstrip("/")
     site = urlsplit(base_url)
@@ -51,7 +62,7 @@ def teams_payload(report, base_url, dist, card_root=CARD_ROOT):
         labels = [f"{week} 카드뉴스 표지"] + [
             f'{repo["rank"]}위 {repo["name"]}' for repo in report["repositories"]
         ]
-        body = [
+        images = [
             {
                 "type": "Image",
                 "size": "Stretch",
@@ -60,6 +71,10 @@ def teams_payload(report, base_url, dist, card_root=CARD_ROOT):
                 "selectAction": {"type": "Action.OpenUrl", "url": f"{gallery_url}/{name}"},
             }
             for name, label in zip(CARD_IMAGES, labels)
+        ]
+        body = [
+            image_grid(images, 3, "188px", "wide"),
+            image_grid(images, 2, "stretch", "atMost:standard"),
         ]
 
     return {
@@ -70,11 +85,11 @@ def teams_payload(report, base_url, dist, card_root=CARD_ROOT):
             "content": {
                 "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                 "type": "AdaptiveCard",
-                "version": "1.2",
+                "version": "1.5",
                 "msteams": {"width": "Full"},
                 "body": body,
                 "actions": [{
-                    "type": "Action.OpenUrl", "title": "주간 리포트 보기",
+                    "type": "Action.OpenUrl", "title": "자세히 보기",
                     "url": f"{base_url}/weeks/{week}.html",
                 }],
             },
