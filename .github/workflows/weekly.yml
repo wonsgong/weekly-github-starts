@@ -91,7 +91,7 @@ jobs:
         env:
           PAGES_URL: ${{ steps.pages.outputs.base_url }}
         run: python3 scripts/build.py --base-url "$PAGES_URL"
-      - name: Prepare Teams cover renderer
+      - name: Prepare Teams image renderer
         continue-on-error: true
         run: |
           if compgen -G 'dist/card-news/*/00-cover.png' >/dev/null && ! command -v ffmpeg >/dev/null; then

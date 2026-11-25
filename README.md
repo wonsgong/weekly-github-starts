@@ -37,4 +37,4 @@ python3 -m http.server 8000 --directory dist
 
 Teams Workflows의 **Send webhook alerts to a channel** 템플릿에서 발급한 URL을 저장소의 Actions Secret `TEAMS_WEBHOOK_URL`에 등록합니다. 웹훅에서 **Anyone** 인증 옵션을 사용하는 경우 URL만으로 요청을 보낼 수 있으므로 URL을 코드나 로그에 남기지 않습니다. [Teams 웹훅 설정](https://support.microsoft.com/en-gb/workflows/send-messages-in-teams-using-incoming-webhooks)
 
-Pages 배포 성공 후 주차 제목과 저장소 링크 10개를 Adaptive Card로 전송합니다. 해당 주차에 카드뉴스가 공개되면 한국어 요약과 카드뉴스 링크를 추가하고, 표지 미리보기를 만들 수 있으면 이미지도 넣습니다. 웹훅 요청 결과는 Actions의 `notify-teams` 작업에서 확인하고, 채널 게시 결과는 Teams 워크플로 실행 기록에서 확인할 수 있습니다.
+Pages 배포 성공 후 Teams Adaptive Card에 표지와 순위별 카드 이미지 11장을 순서대로 게시합니다. Teams에서 표시하는 이미지는 화면 비율을 유지한 816×1020 PNG이며, 이미지를 누르면 Pages에 게시된 1080×1350 원본이 열립니다. 카드 하단에는 **주간 리포트 보기** 버튼이 있으며, 카드뉴스가 없는 주에는 버튼만 게시됩니다. 웹훅 요청과 채널 게시 결과는 각각 Actions의 `notify-teams` 작업과 Teams 워크플로 실행 기록에서 확인할 수 있습니다.

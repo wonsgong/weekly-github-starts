@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
-from scripts import build, collect, generate_cards
+from scripts import build, collect, generate_cards, teams_payload
 from scripts.cards import CARD_IMAGES
 from scripts.reports import SEOUL, SOURCE, iso_week
 
@@ -142,6 +142,19 @@ class ReportTests(unittest.TestCase):
         self.assertIn('href="card-news/2025-W01/index.html"', index.read_text(encoding="utf-8"))
         self.assertIn('href="../card-news/2025-W01/index.html"', week.read_text(encoding="utf-8"))
         self.assertEqual({"index.html", *CARD_IMAGES}, {path.name for path in published.iterdir()})
+        report = json.loads(report_path.read_bytes())
+        with patch.object(teams_payload, "make_teams_images") as resize:
+            payload = teams_payload.teams_payload(report, "https://example.com", destination, card_root)
+            resize.assert_called_once_with(published)
+        card = payload["attachments"][0]["content"]
+        gallery = "https://example.com/card-news/2025-W01"
+        self.assertEqual([f"{gallery}/teams/{name}" for name in CARD_IMAGES],
+                         [image["url"] for image in card["body"]])
+        self.assertTrue(all(image["type"] == "Image" and image["size"] == "Stretch" for image in card["body"]))
+        self.assertEqual([f"{gallery}/{name}" for name in CARD_IMAGES],
+                         [image["selectAction"]["url"] for image in card["body"]])
+        self.assertEqual([{"type": "Action.OpenUrl", "title": "주간 리포트 보기",
+                           "url": "https://example.com/weeks/2025-W01.html"}], card["actions"])
         with patch.object(generate_cards, "summarize_report") as gemini:
             self.assertIn("기존", generate_cards.generate(report_path, card_root))
             gemini.assert_not_called()
@@ -156,3 +169,8 @@ class ReportTests(unittest.TestCase):
         build.build(self.directory, destination, "https://example.com", card_root)
         self.assertNotIn("카드뉴스 보기", index.read_text(encoding="utf-8"))
         self.assertFalse(published.exists())
+        updated = json.loads(report_path.read_bytes())
+        payload = teams_payload.teams_payload(updated, "https://example.com", destination, card_root)
+        fallback = payload["attachments"][0]["content"]
+        self.assertEqual([], fallback["body"])
+        self.assertEqual(card["actions"], fallback["actions"])
