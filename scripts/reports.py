@@ -1,6 +1,8 @@
+import json
 import re
 from datetime import datetime
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -10,6 +12,21 @@ SOURCE = f"{GITHUB}/trending?since=weekly"
 SEOUL = ZoneInfo("Asia/Seoul")
 TOP = 10
 REPO_NAME = re.compile(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+")
+SKILL_PATH = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*){1,2}")
+SKILL_BOARDS = {
+    "skill-leaderboard": {
+        "label": "Skill Leaderboard",
+        "url": "https://www.skillleaderboard.com/",
+        "metric": "7일 스타 증가",
+        "scope": "Skill Leaderboard 공개 카탈로그의 저장소 중 최근 7일 스타 증가량 순위입니다.",
+    },
+    "skills-sh": {
+        "label": "skills.sh",
+        "url": "https://www.skills.sh/trending",
+        "metric": "24시간 설치",
+        "scope": "매주 수집한 skills.sh Trending의 최근 24시간 설치 수 순위입니다.",
+    },
+}
 
 
 def iso_week(timestamp):
@@ -23,7 +40,15 @@ def ranking_key(repo):
     return -repo["weekly_stars"], repo["name"].casefold()
 
 
+def skill_url(identity):
+    prefix = "site/" if identity.count("/") == 1 else ""
+    return f"https://www.skills.sh/{prefix}{identity}"
+
+
 def validate_report(report, week):
+    if "board" in report:
+        validate_skill_report(report, week)
+        return
     if report["week"] != week or report["source"] != SOURCE:
         raise ValueError("리포트 주차 또는 출처가 올바르지 않습니다.")
     if iso_week(datetime.fromisoformat(report["collected_at"])) != week:
@@ -50,3 +75,53 @@ def validate_report(report, week):
         names.add(name.casefold())
     if repos != sorted(repos, key=ranking_key):
         raise ValueError("리포트 정렬이 올바르지 않습니다.")
+
+
+def validate_skill_report(report, week):
+    board = report["board"]
+    if board not in SKILL_BOARDS or report["source"] != SKILL_BOARDS[board]["url"]:
+        raise ValueError("스킬 순위 출처가 올바르지 않습니다.")
+    if report["week"] != week or iso_week(datetime.fromisoformat(report["collected_at"])) != week:
+        raise ValueError("스킬 순위의 수집 주차와 파일 주차가 다릅니다.")
+    if board == "skill-leaderboard":
+        datetime.strptime(report["snapshot_date"], "%Y-%m-%d")
+    entries = report["repositories"]
+    if len(entries) != TOP:
+        raise ValueError(f"스킬 순위 항목은 {TOP}개여야 합니다.")
+    ids = set()
+    previous = None
+    for rank, entry in enumerate(entries, 1):
+        identity, name, count = entry["id"], entry["name"], entry["metric_value"]
+        if board == "skill-leaderboard":
+            valid_address = bool(REPO_NAME.fullmatch(name)) and identity == name.casefold()
+            expected_url = f"{GITHUB}/{name}"
+        else:
+            valid_address = bool(SKILL_PATH.fullmatch(identity))
+            expected_url = skill_url(identity)
+        if (
+            not valid_address or entry["url"] != expected_url or identity in ids
+            or not isinstance(name, str) or not name.strip() or len(name) > 200
+            or not isinstance(entry["description"], str)
+            or type(entry["rank"]) is not int or entry["rank"] != rank
+            or type(count) is not int or count < 0 or (previous is not None and count > previous)
+        ):
+            raise ValueError(f"잘못된 스킬 순위 항목입니다. ({rank}위)")
+        ids.add(identity)
+        previous = count
+
+
+def write_report(report, directory):
+    week = report["week"]
+    validate_report(report, week)
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"{week}.json"
+    temporary = None
+    try:
+        with NamedTemporaryFile(mode="w", encoding="utf-8", dir=directory, delete=False) as output:
+            temporary = Path(output.name)
+            output.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+        temporary.replace(path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    return path

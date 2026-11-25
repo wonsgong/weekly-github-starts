@@ -4,6 +4,7 @@ import concurrent.futures
 import json
 import os
 import re
+import shutil
 import subprocess
 import time
 import urllib.error
@@ -13,15 +14,18 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 if __package__:
-    from .cards import CARD_ROOT, complete_card_set
+    from .cards import CARD_ROOT, complete_card_set, valid_card_image
+    from .collect_skills import skill_description
     from .render_cards import render
     from .reports import ROOT, validate_report
 else:
-    from cards import CARD_ROOT, complete_card_set
+    from cards import CARD_ROOT, complete_card_set, valid_card_image
+    from collect_skills import skill_description
     from render_cards import render
     from reports import ROOT, validate_report
 
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
+COPY_FIELDS = ("headline", "summary", "use_case", "readme_url")
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -89,8 +93,8 @@ def summarize(group, model, api_key):
         "required": ["cards"],
     }
     instructions = (
-        "Write Korean editorial cards about public GitHub repositories for developers. "
-        "For each supplied repo, return its exact name and three Korean text fields. "
+        "Write Korean editorial cards about public software repositories and agent skills. "
+        "For each supplied item, return its exact repo identifier and three Korean text fields. "
         "headline: a clear noun phrase describing what the software does, 8–28 characters; "
         "summary: one sentence, 35–85 characters, explaining what it does and how; "
         "use_case: one practical scenario, 25–80 characters, describing who would use it and when, or empty if uncertain. "
@@ -148,9 +152,19 @@ def normalized(text):
     return " ".join(text.replace("**", "").replace("`", "").split()).casefold()
 
 
+def card_source(repo, board):
+    if board:
+        description = skill_description(repo["url"]) if board == "skills-sh" else repo["description"]
+        if not description:
+            raise ValueError(f'스킬 상세 설명을 찾을 수 없습니다. ({repo["id"]})')
+        return {"repo": repo["id"], "description": description,
+                "readme_excerpt": "", "source_url": repo["url"]}
+    return get_readme(repo)
+
+
 def summarize_report(report, model, key):
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
-        sources = list(pool.map(get_readme, report["repositories"]))
+        sources = list(pool.map(lambda repo: card_source(repo, report.get("board")), report["repositories"]))
 
     summaries = {}
     for offset in range(0, len(sources), 5):
@@ -162,7 +176,7 @@ def summarize_report(report, model, key):
 
     rows = []
     for repo, source in zip(report["repositories"], sources):
-        card = summaries[repo["name"]]
+        card = summaries[source["repo"]]
         headline = card["headline"].strip()
         summary = card["summary"].strip()
         use_case = card["use_case"].strip()
@@ -187,26 +201,75 @@ def summarize_report(report, model, key):
     return {**report, "gemini_model": model, "repositories": rows}
 
 
+def cached_skill_cards(board_root, report):
+    wanted = {entry["id"] for entry in report["repositories"]}
+    reused = {}
+    for manifest in sorted(board_root.glob("????-W??/cards.json"), reverse=True):
+        if manifest.parent.name > report["week"]:
+            continue
+        try:
+            deck = json.loads(manifest.read_text(encoding="utf-8"))
+            if deck.get("board") != report["board"] or deck.get("image_layout") != "reusable-skill-v1":
+                continue
+            entries = {entry["id"]: entry for entry in deck["repositories"]}
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            continue
+        for identity in wanted - reused.keys():
+            entry = entries.get(identity)
+            if not entry:
+                continue
+            try:
+                rank = entry["rank"]
+                if type(rank) is not int or not 1 <= rank <= 10:
+                    continue
+                image = manifest.parent / f"{rank:02d}.png"
+                fields = {field: entry[field] for field in COPY_FIELDS}
+                if all(isinstance(value, str) for value in fields.values()) and valid_card_image(image):
+                    reused[identity] = (fields, image)
+            except (OSError, KeyError):
+                continue
+        if wanted == reused.keys():
+            break
+    return reused
+
+
 def generate(report_path, output_root):
     report = json.loads(report_path.read_text(encoding="utf-8"))
     week = report_path.stem
     validate_report(report, week)
-    destination = output_root / week
+    board = report.get("board")
+    deck_root = output_root / board if board else output_root
+    destination = deck_root / week
     if complete_card_set(destination, report):
         return f"{week} 기존 카드뉴스를 사용합니다."
 
+    cached = cached_skill_cards(deck_root, report) if board else {}
+    to_generate = [entry for entry in report["repositories"] if entry.get("id") not in cached]
     key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not key:
+    if to_generate and not key:
         return f"{week} 카드 생략 — GEMINI_API_KEY가 설정되지 않았습니다."
     model = (os.environ.get("GEMINI_MODEL") or DEFAULT_MODEL).strip().removeprefix("models/")
-    if not re.fullmatch(r"[a-zA-Z0-9._-]+", model):
+    if to_generate and not re.fullmatch(r"[a-zA-Z0-9._-]+", model):
         raise ValueError("GEMINI_MODEL 형식이 올바르지 않습니다.")
-    deck = summarize_report(report, model, key)
+    deck = summarize_report({**report, "repositories": to_generate}, model, key) if to_generate else {
+        **report, "repositories": [],
+    }
+    reused = {}
+    if board:
+        deck["image_layout"] = "reusable-skill-v1"
+        for entry in report["repositories"]:
+            if entry["id"] in cached:
+                fields, image = cached[entry["id"]]
+                deck["repositories"].append({**entry, **fields})
+                reused[entry["rank"]] = image
+        deck["repositories"].sort(key=lambda entry: entry["rank"])
 
-    output_root.mkdir(parents=True, exist_ok=True)
-    with TemporaryDirectory(prefix=".cards-", dir=output_root) as directory:
+    deck_root.mkdir(parents=True, exist_ok=True)
+    with TemporaryDirectory(prefix=".cards-", dir=deck_root) as directory:
         stage = Path(directory).resolve()
-        render(deck, stage)
+        render(deck, stage, reused)
+        for rank, image in reused.items():
+            shutil.copyfile(image, stage / "package" / f"{rank:02d}.png")
         browser_env = {name: value for name, value in os.environ.items() if name != "GEMINI_API_KEY"}
         subprocess.run(
             ["node", str(ROOT / "scripts" / "capture_cards.cjs"), str(stage)],
@@ -225,7 +288,7 @@ def generate(report_path, output_root):
             if previous.exists():
                 previous.rename(destination)
             raise
-    return f"{week} 카드뉴스를 저장했습니다."
+    return f"{week} 카드뉴스를 저장했습니다. ({len(reused)}장 재사용)"
 
 
 def main():

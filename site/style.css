@@ -110,3 +110,23 @@ button:hover { background: #173d2d; }
   .stars { position: static; display: block; margin-top: 0.45rem; text-align: left; }
   .stars small { display: inline; margin-left: 0.4rem; }
 }
+
+.source-tabs {
+  justify-content: flex-start;
+  gap: 0.35rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  margin-top: 0.7rem;
+}
+
+.source-tabs a {
+  display: inline-block;
+  padding: 0.55rem 0.2rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.source-tabs a:hover,
+.source-tabs a[aria-current="true"] {
+  border-bottom: 2px solid var(--accent);
+  color: var(--accent);
+}

@@ -1,0 +1,131 @@
+{
+  "board": "skill-leaderboard",
+  "source": "https://www.skillleaderboard.com/",
+  "week": "2026-W48",
+  "collected_at": "2026-11-25T15:26:51+09:00",
+  "snapshot_date": "2026-11-24",
+  "repositories": [
+    {
+      "rank": 1,
+      "id": "tt-a1i/archify",
+      "name": "tt-a1i/archify",
+      "url": "https://github.com/tt-a1i/archify",
+      "description": "Visualize system architecture and technical workflows. The tool produces explorable HTML diagrams and exports for cloud topology, API call sequences, and data pipelines, while providing capabilities to explain pull request changes through visual walkthroughs.",
+      "metric_value": 26888,
+      "headline": "시스템 아키텍처 및 워크플로 시각화 도구",
+      "summary": "클라우드 구성이나 API 호출 순서를 탐색형 HTML 다이어그램으로 생성하고 풀 리퀘스트 변경 사항을 시각적으로 설명합니다.",
+      "use_case": "개발자가 풀 리퀘스트의 변경 사항이나 데이터 파이프라인 구조를 팀원에게 알기 쉽게 공유할 때 유용합니다.",
+      "readme_url": "https://github.com/tt-a1i/archify"
+    },
+    {
+      "rank": 2,
+      "id": "elementalsouls/claude-bughunter",
+      "name": "elementalsouls/Claude-BugHunter",
+      "url": "https://github.com/elementalsouls/Claude-BugHunter",
+      "description": "Hunt vulnerabilities and document security assessment findings. Built by security researcher Sachin Sharma, drawing on disclosed bug reports. The collection pairs hunting patterns with validation, reporting, and evidence hygiene for authorized assessments.",
+      "metric_value": 12499,
+      "headline": "취약점 탐색 및 보안 평가 문서화 도구",
+      "summary": "공개된 버그 보고서를 기반으로 탐색 패턴과 검증 절차를 결합하여 인가된 보안 평가와 보고서 작성을 돕습니다.",
+      "use_case": "보안 담당자가 승인된 시스템 평가 과정에서 취약점을 체계적으로 발굴하고 증거를 기록할 때 적합합니다.",
+      "readme_url": "https://github.com/elementalsouls/Claude-BugHunter"
+    },
+    {
+      "rank": 3,
+      "id": "erkamyaman/rust-anything",
+      "name": "erkamyaman/rust-anything",
+      "url": "https://github.com/erkamyaman/rust-anything",
+      "description": "Port applications and functions to Rust. This toolset enables incremental porting of individual functions or entire applications to Rust by profiling, bridging units, and verifying behavior through diffing and benchmarking.",
+      "metric_value": 7069,
+      "headline": "애플리케이션의 단계적 Rust 이관 도구",
+      "summary": "프로파일링과 유닛 브리징을 통해 개별 함수나 전체 프로그램을 비교 검증 및 벤치마킹하며 Rust로 전환합니다.",
+      "use_case": "기존 소프트웨어의 특정 기능을 성능 향상을 위해 Rust로 점진적으로 재작성하려는 엔지니어에게 유용합니다.",
+      "readme_url": "https://github.com/erkamyaman/rust-anything"
+    },
+    {
+      "rank": 4,
+      "id": "obra/superpowers",
+      "name": "obra/superpowers",
+      "url": "https://github.com/obra/superpowers",
+      "description": "Plan engineering work and coordinate parallel agents. An opinionated development workflow that asks for a design before writing code, then moves through planning, test-driven implementation, and review. The process is the point.",
+      "metric_value": 6595,
+      "headline": "병렬 에이전트 조율 및 엔지니어링 계획 도구",
+      "summary": "코드 작성 전 설계를 먼저 수립하고 계획, 테스트 주도 개발, 리뷰 단계를 거치도록 개발 워크플로를 관리합니다.",
+      "use_case": "복합 에이전트를 조율하며 엄격한 테스트 주도 설계 프로세스에 따라 개발을 진행하려는 팀에게 적합합니다.",
+      "readme_url": "https://github.com/obra/superpowers"
+    },
+    {
+      "rank": 5,
+      "id": "nexu-io/openmotion",
+      "name": "nexu-io/openmotion",
+      "url": "https://github.com/nexu-io/openmotion",
+      "description": "Create motion design briefs and brandkits. Starts from a reference video and rebuilds the sequence with your brand and copy. Its Motion.md format records shot order, timing, and transitions as reusable project material.",
+      "metric_value": 5595,
+      "headline": "모션 디자인 기획서 및 브랜드킷 제작 도구",
+      "summary": "레퍼런스 비디오를 바탕으로 샷 순서와 타이밍을 기록하며 브랜드 맞춤형 시퀀스와 기획 문서를 구성합니다.",
+      "use_case": "디자이너가 참고 영상을 바탕으로 자사 브랜드 에셋과 문구를 적용한 모션 프로젝트 명세서를 작성할 때 유용합니다.",
+      "readme_url": "https://github.com/nexu-io/openmotion"
+    },
+    {
+      "rank": 6,
+      "id": "mattpocock/skills",
+      "name": "mattpocock/skills",
+      "url": "https://github.com/mattpocock/skills",
+      "description": "Design codebases and review implementations. Matt Pocock’s everyday engineering skills. Small pieces you can adapt and combine, rather than a development process you have to adopt wholesale.",
+      "metric_value": 5435,
+      "headline": "코드베이스 설계 및 구현 검토 기술 모음",
+      "summary": "개별적으로 조합하여 적용할 수 있는 엔지니어링 실무 기법을 제공하여 코드베이스 설계와 구현 검토를 돕습니다.",
+      "use_case": "개발 프로세스 전체를 바꾸지 않고 필요한 소프트웨어 설계 단위만 골라 적용하고 싶을 때 유용합니다.",
+      "readme_url": "https://github.com/mattpocock/skills"
+    },
+    {
+      "rank": 7,
+      "id": "dietrichgebert/ponytail",
+      "name": "DietrichGebert/ponytail",
+      "url": "https://github.com/DietrichGebert/ponytail",
+      "description": "Audit repository quality and track technical debt. Ponytail borrows the persona of a terse senior engineer. Its central rule is to reuse what exists and write only what is needed, without cutting safeguards.",
+      "metric_value": 5246,
+      "headline": "저장소 품질 감사 및 기술 부채 추적 도구",
+      "summary": "기존 자산을 재사용하고 불필요한 코드를 줄이는 방식으로 저장소의 품질을 감사하고 기술 부채를 추적합니다.",
+      "use_case": "안전장치를 유지하면서 필요한 코드만 작성해 프로젝트 내 기술 부채를 점검하려는 개발자에게 적합합니다.",
+      "readme_url": "https://github.com/DietrichGebert/ponytail"
+    },
+    {
+      "rank": 8,
+      "id": "mvanhorn/last30days-skill",
+      "name": "mvanhorn/last30days-skill",
+      "url": "https://github.com/mvanhorn/last30days-skill",
+      "description": "Research recent trends across social and web sources. Built to catch up on what people are discussing now. It brings recent conversations from separate platforms into one brief, using engagement signals to help sort the material.",
+      "metric_value": 5233,
+      "headline": "웹과 소셜 트렌드 조사 도구",
+      "summary": "여러 소셜 플랫폼의 최근 대화 내용을 반응 지표를 바탕으로 정리하여 하나의 요약 보고서로 취합합니다.",
+      "use_case": "현재 웹과 소셜 미디어에서 사람들이 어떤 주제로 논의하고 있는지 빠르게 파악하고 싶을 때 사용합니다.",
+      "readme_url": "https://github.com/mvanhorn/last30days-skill"
+    },
+    {
+      "rank": 9,
+      "id": "mjmirza/app-store-compliance",
+      "name": "mjmirza/app-store-compliance",
+      "url": "https://github.com/mjmirza/app-store-compliance",
+      "description": "Audit mobile apps for store submission compliance. A pre-submission playbook that pairs human checklists with an automated app scan. Developers can investigate findings before submitting, while an appeal playbook helps organize the response if an app is rejected.",
+      "metric_value": 4950,
+      "headline": "앱 스토어 등록 규정 준수 감사 도구",
+      "summary": "체크리스트와 자동 검사를 결합하여 모바일 앱의 스토어 제출 규격 준수 여부를 확인하고 거절 시 대응을 돕습니다.",
+      "use_case": "앱 스토어에 앱을 배포하기 전에 심사 탈락 요인을 미리 확인하고 준비하려는 모바일 개발자에게 적합합니다.",
+      "readme_url": "https://github.com/mjmirza/app-store-compliance"
+    },
+    {
+      "rank": 10,
+      "id": "htdt/godogen",
+      "name": "htdt/godogen",
+      "url": "https://github.com/htdt/godogen",
+      "description": "Generate game assets and configure engine toolchains. Create images, rigged humanoid models, and audio files while utilizing guides for Godot 4, Bevy, Babylon.js, three.js, and HTML.",
+      "metric_value": 4398,
+      "headline": "게임 에셋 생성 및 엔진 환경 설정 도구",
+      "summary": "이미지, 리깅된 3D 모델, 오디오를 생성하고 다양한 게임 엔진 환경을 설정할 수 있는 가이드를 지원합니다.",
+      "use_case": "Godot이나 Bevy 같은 엔진용 에셋을 직접 생성하여 게임 프로토타입을 빠르게 구축하려는 개발자가 씁니다.",
+      "readme_url": "https://github.com/htdt/godogen"
+    }
+  ],
+  "gemini_model": "gemini-3.8-flash",
+  "image_layout": "reusable-skill-v1"
+}

@@ -1,0 +1,89 @@
+{
+  "board": "skill-leaderboard",
+  "source": "https://www.skillleaderboard.com/",
+  "week": "2026-W48",
+  "collected_at": "2026-11-25T15:26:51+09:00",
+  "snapshot_date": "2026-11-24",
+  "repositories": [
+    {
+      "rank": 1,
+      "id": "tt-a1i/archify",
+      "name": "tt-a1i/archify",
+      "url": "https://github.com/tt-a1i/archify",
+      "description": "Visualize system architecture and technical workflows. The tool produces explorable HTML diagrams and exports for cloud topology, API call sequences, and data pipelines, while providing capabilities to explain pull request changes through visual walkthroughs.",
+      "metric_value": 26888
+    },
+    {
+      "rank": 2,
+      "id": "elementalsouls/claude-bughunter",
+      "name": "elementalsouls/Claude-BugHunter",
+      "url": "https://github.com/elementalsouls/Claude-BugHunter",
+      "description": "Hunt vulnerabilities and document security assessment findings. Built by security researcher Sachin Sharma, drawing on disclosed bug reports. The collection pairs hunting patterns with validation, reporting, and evidence hygiene for authorized assessments.",
+      "metric_value": 12499
+    },
+    {
+      "rank": 3,
+      "id": "erkamyaman/rust-anything",
+      "name": "erkamyaman/rust-anything",
+      "url": "https://github.com/erkamyaman/rust-anything",
+      "description": "Port applications and functions to Rust. This toolset enables incremental porting of individual functions or entire applications to Rust by profiling, bridging units, and verifying behavior through diffing and benchmarking.",
+      "metric_value": 7069
+    },
+    {
+      "rank": 4,
+      "id": "obra/superpowers",
+      "name": "obra/superpowers",
+      "url": "https://github.com/obra/superpowers",
+      "description": "Plan engineering work and coordinate parallel agents. An opinionated development workflow that asks for a design before writing code, then moves through planning, test-driven implementation, and review. The process is the point.",
+      "metric_value": 6595
+    },
+    {
+      "rank": 5,
+      "id": "nexu-io/openmotion",
+      "name": "nexu-io/openmotion",
+      "url": "https://github.com/nexu-io/openmotion",
+      "description": "Create motion design briefs and brandkits. Starts from a reference video and rebuilds the sequence with your brand and copy. Its Motion.md format records shot order, timing, and transitions as reusable project material.",
+      "metric_value": 5595
+    },
+    {
+      "rank": 6,
+      "id": "mattpocock/skills",
+      "name": "mattpocock/skills",
+      "url": "https://github.com/mattpocock/skills",
+      "description": "Design codebases and review implementations. Matt Pocock’s everyday engineering skills. Small pieces you can adapt and combine, rather than a development process you have to adopt wholesale.",
+      "metric_value": 5435
+    },
+    {
+      "rank": 7,
+      "id": "dietrichgebert/ponytail",
+      "name": "DietrichGebert/ponytail",
+      "url": "https://github.com/DietrichGebert/ponytail",
+      "description": "Audit repository quality and track technical debt. Ponytail borrows the persona of a terse senior engineer. Its central rule is to reuse what exists and write only what is needed, without cutting safeguards.",
+      "metric_value": 5246
+    },
+    {
+      "rank": 8,
+      "id": "mvanhorn/last30days-skill",
+      "name": "mvanhorn/last30days-skill",
+      "url": "https://github.com/mvanhorn/last30days-skill",
+      "description": "Research recent trends across social and web sources. Built to catch up on what people are discussing now. It brings recent conversations from separate platforms into one brief, using engagement signals to help sort the material.",
+      "metric_value": 5233
+    },
+    {
+      "rank": 9,
+      "id": "mjmirza/app-store-compliance",
+      "name": "mjmirza/app-store-compliance",
+      "url": "https://github.com/mjmirza/app-store-compliance",
+      "description": "Audit mobile apps for store submission compliance. A pre-submission playbook that pairs human checklists with an automated app scan. Developers can investigate findings before submitting, while an appeal playbook helps organize the response if an app is rejected.",
+      "metric_value": 4950
+    },
+    {
+      "rank": 10,
+      "id": "htdt/godogen",
+      "name": "htdt/godogen",
+      "url": "https://github.com/htdt/godogen",
+      "description": "Generate game assets and configure engine toolchains. Create images, rigged humanoid models, and audio files while utilizing guides for Godot 4, Bevy, Babylon.js, three.js, and HTML.",
+      "metric_value": 4398
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "board": "skills-sh",
+  "source": "https://www.skills.sh/trending",
+  "week": "2026-W48",
+  "collected_at": "2026-11-25T15:26:51+09:00",
+  "repositories": [
+    {
+      "rank": 1,
+      "id": "beltsh/superpowers/ai-video-generation",
+      "name": "ai-video-generation",
+      "url": "https://www.skills.sh/beltsh/superpowers/ai-video-generation",
+      "description": "beltsh/superpowers",
+      "metric_value": 28562
+    },
+    {
+      "rank": 2,
+      "id": "beltsh/superpowers/ai-image-generation",
+      "name": "ai-image-generation",
+      "url": "https://www.skills.sh/beltsh/superpowers/ai-image-generation",
+      "description": "beltsh/superpowers",
+      "metric_value": 28549
+    },
+    {
+      "rank": 3,
+      "id": "beltsh/superpowers/ai-avatar-video",
+      "name": "ai-avatar-video",
+      "url": "https://www.skills.sh/beltsh/superpowers/ai-avatar-video",
+      "description": "beltsh/superpowers",
+      "metric_value": 28548
+    },
+    {
+      "rank": 4,
+      "id": "beltsh/superpowers/twitter-automation",
+      "name": "twitter-automation",
+      "url": "https://www.skills.sh/beltsh/superpowers/twitter-automation",
+      "description": "beltsh/superpowers",
+      "metric_value": 28547
+    },
+    {
+      "rank": 5,
+      "id": "vercel-labs/agent-browser/agent-browser",
+      "name": "agent-browser",
+      "url": "https://www.skills.sh/vercel-labs/agent-browser/agent-browser",
+      "description": "vercel-labs/agent-browser",
+      "metric_value": 21657
+    },
+    {
+      "rank": 6,
+      "id": "designed-by-ai/skills/design-mobile-apps",
+      "name": "design-mobile-apps",
+      "url": "https://www.skills.sh/designed-by-ai/skills/design-mobile-apps",
+      "description": "designed-by-ai/skills",
+      "metric_value": 19660
+    },
+    {
+      "rank": 7,
+      "id": "vercel-labs/skills/find-skills",
+      "name": "find-skills",
+      "url": "https://www.skills.sh/vercel-labs/skills/find-skills",
+      "description": "vercel-labs/skills",
+      "metric_value": 17748
+    },
+    {
+      "rank": 8,
+      "id": "uizze.sh/ui-taste",
+      "name": "ui-taste",
+      "url": "https://www.skills.sh/site/uizze.sh/ui-taste",
+      "description": "uizze.sh",
+      "metric_value": 16683
+    },
+    {
+      "rank": 9,
+      "id": "flowkit-labs/skills/website-builder",
+      "name": "website-builder",
+      "url": "https://www.skills.sh/flowkit-labs/skills/website-builder",
+      "description": "flowkit-labs/skills",
+      "metric_value": 14935
+    },
+    {
+      "rank": 10,
+      "id": "gencraft-labs/skills/ai-image-generation",
+      "name": "ai-image-generation",
+      "url": "https://www.skills.sh/gencraft-labs/skills/ai-image-generation",
+      "description": "gencraft-labs/skills",
+      "metric_value": 14799
+    }
+  ]
+}

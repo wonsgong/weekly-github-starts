@@ -1,11 +1,9 @@
 import argparse
-import json
 import re
 from datetime import datetime
 from html.parser import HTMLParser
 from http.client import HTTPException
 from pathlib import Path
-from tempfile import NamedTemporaryFile
 from urllib.request import Request, urlopen
 
 if __package__:
@@ -131,20 +129,7 @@ def collect(report_dir=reports.REPORTS):
             {"rank": rank, **repo} for rank, repo in enumerate(candidates[:reports.TOP], 1)
         ],
     }
-    reports.validate_report(report, week)
-
-    report_dir.mkdir(parents=True, exist_ok=True)
-    path = report_dir / f"{week}.json"
-    temporary_path = None
-    try:
-        with NamedTemporaryFile(mode="w", encoding="utf-8", dir=report_dir, delete=False) as output:
-            temporary_path = Path(output.name)
-            output.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
-        temporary_path.replace(path)
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
-    return path
+    return reports.write_report(report, report_dir)
 
 
 def main():

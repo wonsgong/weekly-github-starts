@@ -33,8 +33,16 @@ python3 -m http.server 8000 --directory dist
 
 로컬에서 새 카드를 만들려면 환경 변수로 키를 전달한 상태에서 `python3 scripts/generate_cards.py reports/YYYY-Www.json`을 실행합니다. PNG 렌더링에는 Node.js, Chrome 및 한국어 폰트가 필요합니다. Chrome이 기본 경로에 없으면 `CHROME_BIN`으로 실행 파일 경로를 지정할 수 있습니다.
 
+## 스킬 순위
+
+사이트의 **Skill Leaderboard**와 **skills.sh** 탭은 같은 수요일 워크플로에서 갱신합니다. Skill Leaderboard는 공개 카탈로그의 저장소를 7일 스타 증가량으로 정렬합니다. skills.sh는 수집 당시 Trending에 표시된 **최근 24시간 설치 수**를 주차별로 기록합니다. 각 탭에서 해당 출처의 TOP 10, 지난 리포트, 카드뉴스를 볼 수 있습니다. [Skill Leaderboard 카탈로그](https://www.skillleaderboard.com/api/catalog) · [skills.sh Trending](https://www.skills.sh/trending)
+
+스킬 리포트와 카드뉴스는 각각 `reports/<출처>/YYYY-Www.json`과 `card-news/<출처>/YYYY-Www/`에 저장합니다. 다시 순위권에 들어온 항목은 같은 출처의 안정적인 식별자로 찾고, 기존 문구와 PNG를 재사용합니다. 주차, 순위, 지표는 새 표지와 리포트에 표시됩니다. 한 출처의 수집이나 카드 생성에 실패하면 기존 파일을 보존하고 나머지 출처를 계속 처리합니다.
+
+로컬 수집은 `python3 scripts/collect_skills.py skill-leaderboard`와 `python3 scripts/collect_skills.py skills-sh`를 사용합니다. 카드 생성 명령에는 해당 출처의 리포트 경로를 전달합니다.
+
 ## Teams 배포 알림
 
 Teams Workflows의 **Send webhook alerts to a channel** 템플릿에서 발급한 URL을 저장소의 Actions Secret `TEAMS_WEBHOOK_URL`에 등록합니다. 웹훅에서 **Anyone** 인증 옵션을 사용하는 경우 URL만으로 요청을 보낼 수 있으므로 URL을 코드나 로그에 남기지 않습니다. [Teams 웹훅 설정](https://support.microsoft.com/en-gb/workflows/send-messages-in-teams-using-incoming-webhooks)
 
-Pages 배포 성공 후 Teams Adaptive Card에 표지와 순위별 카드 이미지 11장을 순서대로 게시합니다. 넓은 화면에서는 한 줄에 3장, 좁은 화면에서는 2장을 표시합니다. 데스크톱에서는 이미지에 마우스를 올려 확대 아이콘을 누르고, 모바일에서는 이미지를 눌러 Teams 안에서 확대할 수 있습니다. 카드 하단의 **자세히 보기**는 주간 리포트를 열며, 카드뉴스가 없는 주에는 버튼만 게시됩니다. 웹훅 요청과 채널 게시 결과는 각각 Actions의 `notify-teams` 작업과 Teams 워크플로 실행 기록에서 확인할 수 있습니다.
+Pages 배포 성공 후 출처별로 Teams Adaptive Card를 게시합니다. 각 게시물에는 출처가 표시된 표지와 순위별 이미지 10장이 들어갑니다. 넓은 화면에서는 한 줄에 3장, 좁은 화면에서는 2장을 표시합니다. 데스크톱에서는 이미지에 마우스를 올려 확대 아이콘을 누르고, 모바일에서는 이미지를 눌러 Teams 안에서 확대할 수 있습니다. 카드 하단의 **자세히 보기**는 해당 출처의 주간 리포트를 엽니다. 웹훅 요청과 채널 게시 결과는 각각 Actions의 `notify-teams` 작업과 Teams 워크플로 실행 기록에서 확인할 수 있습니다.
